@@ -119,7 +119,8 @@ class GameScene: SKScene {
   }
   
   func quirkPressed() {
-    print("Quirk pressed!")    
+    print("Quirk pressed!")
+    entityManager.spawnQuirk(team: .team1)
   }
   
   func zapPressed() {
@@ -170,7 +171,6 @@ class GameScene: SKScene {
     label.run(scaleAction)
     
   }
-  
  
   override func update(_ currentTime: TimeInterval) {
     if gameOver {
