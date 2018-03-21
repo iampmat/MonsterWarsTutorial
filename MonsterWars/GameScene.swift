@@ -43,6 +43,8 @@ class GameScene: SKScene {
   // Game over detection
   var gameOver = false
   
+  var entityManager: EntityManager!
+  
   override func didMove(to view: SKView) {
   
     print("scene size: \(size)")
@@ -99,6 +101,21 @@ class GameScene: SKScene {
     coin2Label.text = "10"
     self.addChild(coin2Label)
     
+    entityManager = EntityManager(scene: self)
+    
+    // Huname Castle Entity
+    let humanCastle = Castle(imageName: "castle1_atk", team: .team1)
+    if let spriteComponent = humanCastle.component(ofType: SpriteComponent.self) {
+      spriteComponent.node.position = CGPoint(x: spriteComponent.node.size.width/2, y: size.height/2)
+    }
+    entityManager.add(humanCastle)
+    
+    // AI Castle Entity
+    let aiCastle = Castle(imageName: "castle2_atk", team: .team2)
+    if let spriteComponent = aiCastle.component(ofType: SpriteComponent.self) {
+      spriteComponent.node.position = CGPoint(x: size.width - spriteComponent.node.size.width/2, y: size.height/2)
+    }
+    entityManager.add(aiCastle)
   }
   
   func quirkPressed() {
@@ -160,5 +177,18 @@ class GameScene: SKScene {
       return
     }
     
+    let deltaTime = currentTime - lastUpdateTimeInterval
+    lastUpdateTimeInterval = currentTime
+    
+    entityManager.update(deltaTime)
+    
+    if let human = entityManager.castle(for: .team1),
+      let humanCastle = human.component(ofType: CastleComponent.self) {
+      coin1Label.text = "\(humanCastle.coins)"
+    }
+    if let ai = entityManager.castle(for: .team2),
+      let aiCastle = ai.component(ofType: CastleComponent.self) {
+      coin2Label.text = "\(aiCastle.coins)"
+    }
   }
 }
